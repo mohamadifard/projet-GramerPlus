@@ -1,0 +1,620 @@
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+
+// آیکون‌ها
+// در یک محیط واقعی، اینها را از یک کتابخانه مانند lucide-react import می‌کنیم.
+const CheckCircle = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.08"/><path d="m9 11 3 3L22 4"/></svg>;
+const User = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+const Book = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
+const Search = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
+const BarChart = () => <svg {
+  "name": "my-react-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.4",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bar-chart-3"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>;
+const LogOut = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
+const Gift = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gift"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-5"/><path d="M7 8V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4"/></svg>;
+const Headset = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-headset"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/><path d="M12 19V5a7 7 0 1 0 0 14z"/></svg>;
+const GraduationCap = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-graduation-cap"><path d="M22 10v6m-2-1v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2"/><path d="M22 10a5 5 0 0 0-10 0v2a5 5 0 0 0 10 0v-2m-10 0a5 5 0 0 1-10 0V8a5 5 0 0 1 10 0v2"/></svg>;
+
+// کامپوننت‌های اصلی اپلیکیشن
+const Navbar = ({ user, onPageChange, onLogout }) => (
+    <nav className="bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
+            <h1 className="text-2xl font-extrabold text-indigo-700">گرامر پلاس</h1>
+            <div className="flex flex-wrap gap-4 mt-4 sm:mt-0 items-center">
+                <button onClick={() => onPageChange('checker')} className="nav-btn group">
+                    <CheckCircle className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">تصحیح متن</span>
+                </button>
+                <button onClick={() => onPageChange('grammar')} className="nav-btn group">
+                    <GraduationCap className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">آموزش گرامر</span>
+                </button>
+                <button onClick={() => onPageChange('vocabulary')} className="nav-btn group">
+                    <Book className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">واژه‌نامه</span>
+                </button>
+                <button onClick={() => onPageChange('search')} className="nav-btn group">
+                    <Search className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">جستجوی کلمه</span>
+                </button>
+                <button onClick={() => onPageChange('support')} className="nav-btn group">
+                    <Headset className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">پشتیبانی</span>
+                </button>
+                <button onClick={() => onPageChange('profile')} className="nav-btn group">
+                    <User className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                    <span className="text-sm">پروفایل</span>
+                </button>
+                {user.isAdmin && (
+                    <button onClick={() => onPageChange('dashboard')} className="nav-btn group">
+                        <BarChart className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                        <span className="text-sm">داشبورد</span>
+                    </button>
+                )}
+                <button onClick={onLogout} className="nav-btn-logout group">
+                    <LogOut className="w-5 h-5 text-white group-hover:text-red-300 transition-colors" />
+                    <span className="text-sm text-white group-hover:text-red-300">خروج</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+);
+
+const AppContainer = ({ children }) => (
+    <main className="container mx-auto px-4 py-8">
+        {children}
+    </main>
+);
+
+const SectionCard = ({ children, title }) => (
+    <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 transition-all hover:shadow-2xl">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{title}</h2>
+        {children}
+    </div>
+);
+
+// کامپوننت برای تصحیح متن
+const Checker = () => {
+    const [text, setText] = useState('');
+    const [correctedText, setCorrectedText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [changes, setChanges] = useState([]);
+
+    const checkText = async () => {
+        setIsLoading(true);
+        setCorrectedText('');
+        setChanges([]);
+
+        // شبیه‌سازی فراخوانی API به مدل Gemini
+        // در یک اپلیکیشن واقعی، از fetch برای ارسال داده‌ها به API استفاده می‌کنیم.
+        
+        // شبیه‌سازی پاسخ از مدل
+        const simulatedResponse = {
+            corrected: text.replace('اهمیت', 'اهمیت').replace('میده', 'می‌دهد'),
+            changes: [
+                { original: 'اهمیت', corrected: 'اهمیت', explanation: 'املای صحیح' },
+                { original: 'میده', corrected: 'می‌دهد', explanation: 'تصحیح فعل و نیم‌فاصله' },
+            ]
+        };
+
+        setTimeout(() => {
+            setCorrectedText(simulatedResponse.corrected);
+            setChanges(simulatedResponse.changes);
+            setIsLoading(false);
+        }, 1500); // شبیه‌سازی تأخیر API
+    };
+
+    return (
+        <SectionCard title="تصحیح و بهبود متن فارسی">
+            <p className="text-gray-600 mb-4">متن خود را وارد کنید و روی دکمه "تصحیح" کلیک نمایید.</p>
+            <textarea
+                className="w-full min-h-[200px] p-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                placeholder="متن خود را اینجا بنویسید..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            />
+            <button
+                onClick={checkText}
+                className="w-full mt-4 bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={isLoading || !text.trim()}
+            >
+                {isLoading ? 'در حال بررسی...' : 'تصحیح متن'}
+            </button>
+
+            {correctedText && (
+                <div className="mt-8 p-6 bg-green-50 text-green-800 rounded-xl border border-green-200">
+                    <h3 className="font-bold text-xl mb-2">متن تصحیح‌شده:</h3>
+                    <p className="text-lg leading-relaxed">{correctedText}</p>
+                </div>
+            )}
+            
+            {changes.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="font-bold text-xl mb-3 text-gray-800">تغییرات انجام شده:</h3>
+                    <ul className="space-y-3">
+                        {changes.map((change, index) => (
+                            <li key={index} className="bg-gray-50 p-4 rounded-lg flex items-start gap-4 shadow-sm border border-gray-100">
+                                <span className="text-gray-500 font-mono text-sm px-2 py-1 bg-gray-200 rounded-full">#{index + 1}</span>
+                                <div>
+                                    <p className="text-gray-700">
+                                        **کلمه اصلی:** <span className="line-through text-red-500 ml-1">{change.original}</span>
+                                        **کلمه تصحیح‌شده:** <span className="font-semibold text-green-600 ml-1">{change.corrected}</span>
+                                    </p>
+                                    <p className="text-gray-600 text-sm mt-1">**توضیح:** {change.explanation}</p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </SectionCard>
+    );
+};
+
+// کامپوننت برای آموزش گرامر
+const GrammarRules = () => {
+    const grammarTopics = [
+        { id: 1, title: 'ساختارهای جمله در فارسی', content: 'جملات فارسی به سه دسته تقسیم می‌شوند: ساده، مرکب و پیچیده...' },
+        { id: 2, title: 'کاربرد نیم‌فاصله', content: 'نیم‌فاصله برای اتصال کلماتی که یک واحد معنایی را تشکیل می‌دهند استفاده می‌شود، مانند "می‌روم" یا "می‌گویم".' },
+        { id: 3, title: 'انواع فعل‌ها', content: 'فعل‌های لازم و متعدی...' },
+    ];
+    return (
+        <SectionCard title="آموزش جامع گرامر فارسی">
+            <p className="text-gray-600 mb-6">با مطالعه این نکات، مهارت نگارشی خود را تقویت کنید.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {grammarTopics.map(topic => (
+                    <div key={topic.id} className="p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-sm transition-all hover:bg-gray-100">
+                        <h3 className="font-bold text-lg text-indigo-700 mb-2">{topic.title}</h3>
+                        <p className="text-gray-700 text-sm">{topic.content.substring(0, 80)}...</p>
+                        <button className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-800">بیشتر بخوانید</button>
+                    </div>
+                ))}
+            </div>
+        </SectionCard>
+    );
+};
+
+// کامپوننت برای واژه‌نامه و فلش‌کارت
+const Vocabulary = () => {
+    const [words, setWords] = useState([
+        { word: 'اهمیت', meaning: 'ارزش، اهمیت، اهمیت', structure: 'اسم' },
+        { word: 'می‌دهد', meaning: 'فعل دادن در زمان حال', structure: 'فعل' }
+    ]);
+    const [newWord, setNewWord] = useState('');
+    const [newMeaning, setNewMeaning] = useState('');
+    
+    const handleAddWord = () => {
+        if (newWord && newMeaning) {
+            setWords([...words, { word: newWord, meaning: newMeaning, structure: 'نامشخص' }]);
+            setNewWord('');
+            setNewMeaning('');
+        }
+    };
+    
+    const handlePractice = () => {
+        alert('شبیه‌سازی شروع فلش‌کارت و سیستم تکرار با فاصله...');
+    };
+
+    return (
+        <SectionCard title="واژه‌نامه شخصی و فلش‌کارت">
+            <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-2">کلمات شما:</h3>
+                {words.length === 0 ? (
+                    <p className="text-gray-500 italic">هنوز کلمه‌ای در واژه‌نامه شما ثبت نشده است.</p>
+                ) : (
+                    <ul className="space-y-3">
+                        {words.map((w, index) => (
+                            <li key={index} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100">
+                                <span className="font-bold text-lg text-indigo-600">{w.word}</span>
+                                <p className="text-gray-700 text-sm mt-1">
+                                    **معنی:** {w.meaning}
+                                </p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                <h3 className="text-xl font-semibold mb-3 text-blue-800">اضافه کردن کلمه جدید:</h3>
+                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                    <input
+                        type="text"
+                        placeholder="کلمه"
+                        className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={newWord}
+                        onChange={(e) => setNewWord(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="معنی"
+                        className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={newMeaning}
+                        onChange={(e) => setNewMeaning(e.target.value)}
+                    />
+                </div>
+                <button
+                    onClick={handleAddWord}
+                    className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled={!newWord || !newMeaning}
+                >
+                    اضافه کردن
+                </button>
+            </div>
+            <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                <button
+                    onClick={handlePractice}
+                    className="flex-1 w-full bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                >
+                    شروع تمرین فلش‌کارت
+                </button>
+            </div>
+        </SectionCard>
+    );
+};
+
+// کامپوننت برای جستجوی معنی و ساختار کلمه
+const WordSearch = () => {
+    const [query, setQuery] = useState('');
+    const [result, setResult] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const searchWord = async () => {
+        if (!query.trim()) return;
+        setIsLoading(true);
+        setResult(null);
+
+        // شبیه‌سازی فراخوانی API برای جستجوی معنی کلمه
+        
+        const simulatedResult = {
+            word: query,
+            meaning: `معنی شبیه‌سازی شده برای کلمه "${query}"`,
+            structure: 'اسم، جمع: کلمات'
+        };
+
+        setTimeout(() => {
+            setResult(simulatedResult);
+            setIsLoading(false);
+        }, 1000); // شبیه‌سازی تأخیر
+    };
+
+    return (
+        <SectionCard title="جستجوی معنی و ساختار کلمه">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <input
+                    type="text"
+                    placeholder="کلمه مورد نظر خود را وارد کنید"
+                    className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                />
+                <button
+                    onClick={searchWord}
+                    className="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
+                    disabled={isLoading || !query.trim()}
+                >
+                    {isLoading ? 'در حال جستجو...' : 'جستجو'}
+                </button>
+            </div>
+            {result && (
+                <div className="mt-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                    <h3 className="font-bold text-xl mb-2 text-indigo-700">{result.word}</h3>
+                    <p className="text-gray-700">**معنی:** {result.meaning}</p>
+                    <p className="text-gray-700 mt-2">**ساختار:** {result.structure}</p>
+                </div>
+            )}
+        </SectionCard>
+    );
+};
+
+// کامپوننت پشتیبانی چت
+const SupportChat = () => {
+    const [messages, setMessages] = useState([
+        { sender: 'support', text: 'سلام! به پشتیبانی گرامر پلاس خوش آمدید. چگونه می‌توانم به شما کمک کنم؟' }
+    ]);
+    const [input, setInput] = useState('');
+
+    const handleSendMessage = () => {
+        if (input.trim()) {
+            setMessages([...messages, { sender: 'user', text: input }]);
+            setInput('');
+            // شبیه‌سازی پاسخ از پشتیبانی
+            setTimeout(() => {
+                setMessages(prev => [...prev, { sender: 'support', text: 'درخواست شما دریافت شد و به زودی پاسخ داده خواهد شد.' }]);
+            }, 1500);
+        }
+    };
+
+    return (
+        <SectionCard title="پشتیبانی آنلاین">
+            <div className="flex flex-col h-[400px] bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <div className="flex-1 overflow-y-auto mb-4 p-2 space-y-4">
+                    {messages.map((msg, index) => (
+                        <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`p-3 rounded-2xl max-w-[75%] ${msg.sender === 'user' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none shadow'}`}>
+                                {msg.text}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="پیام خود را بنویسید..."
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    />
+                    <button
+                        onClick={handleSendMessage}
+                        className="bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        ارسال
+                    </button>
+                </div>
+            </div>
+        </SectionCard>
+    );
+};
+
+// کامپوننت برای پروفایل کاربر
+const Profile = () => {
+    const userStats = {
+        correctedTexts: 45,
+        newWordsLearned: 12,
+        commonErrors: ['نیم‌فاصله', 'املای نادرست'],
+        subscriptionPlan: 'پلن سالانه',
+    };
+
+    return (
+        <SectionCard title="پروفایل کاربری">
+            <div className="text-center mb-6">
+                <div className="w-24 h-24 mx-auto rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-5xl font-bold">
+                    A
+                </div>
+                <h3 className="text-2xl font-bold mt-4">کاربر آزمایشی</h3>
+                <p className="text-gray-500">testuser@example.com</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+                <div className="p-6 bg-blue-50 rounded-xl border border-blue-200 shadow-sm">
+                    <p className="text-4xl font-extrabold text-blue-600">{userStats.correctedTexts}</p>
+                    <p className="text-gray-600 mt-2">متن تصحیح شده</p>
+                </div>
+                <div className="p-6 bg-green-50 rounded-xl border border-green-200 shadow-sm">
+                    <p className="text-4xl font-extrabold text-green-600">{userStats.newWordsLearned}</p>
+                    <p className="text-gray-600 mt-2">کلمه جدید یاد گرفته شده</p>
+                </div>
+                <div className="p-6 bg-red-50 rounded-xl border border-red-200 shadow-sm">
+                    <p className="text-lg font-extrabold text-red-600">اشتباهات رایج</p>
+                    <ul className="mt-2 space-y-1">
+                        {userStats.commonErrors.map((error, index) => (
+                            <li key={index} className="text-sm text-gray-700 bg-red-100 rounded-full px-3 py-1 inline-block m-1">
+                                {error}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200 text-center">
+                <h3 className="text-xl font-bold mb-2 text-yellow-700">وضعیت اشتراک</h3>
+                <p className="text-gray-700 font-semibold">{userStats.subscriptionPlan}</p>
+                <button className="mt-3 text-sm font-semibold text-yellow-600 hover:text-yellow-800">تمدید یا تغییر اشتراک</button>
+            </div>
+        </SectionCard>
+    );
+};
+
+// کامپوننت داشبورد مدیریتی (شبیه‌سازی شده)
+const Dashboard = () => {
+    return (
+        <SectionCard title="داشبورد مدیریتی">
+            <p className="text-gray-600 mb-4">این بخش اطلاعات مدیریتی و آماری اپلیکیشن را نمایش می‌دهد.</p>
+            <div className="p-6 bg-indigo-50 rounded-xl border border-indigo-200">
+                <p className="font-semibold text-indigo-700">آمار کاربران:</p>
+                <ul className="list-disc list-inside mt-2 text-gray-700">
+                    <li>تعداد کاربران کل: 1,245</li>
+                    <li>تعداد کاربران فعال امروز: 210</li>
+                    <li>تعداد اشتراک‌های فعال: 150</li>
+                </ul>
+            </div>
+        </SectionCard>
+    );
+};
+
+// کامپوننت برای ورود یا ثبت‌نام
+const Auth = ({ onLoginSuccess }) => {
+    const [isLogin, setIsLogin] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(isLogin ? 'ورود' : 'ثبت‌نام', { email, password });
+        onLoginSuccess({ email, isAdmin: email === 'admin@example.com' });
+    };
+
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+            <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">
+                    {isLogin ? 'ورود به گرامر پلاس' : 'ثبت‌نام در گرامر پلاس'}
+                </h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-gray-700 font-medium">ایمیل</label>
+                        <input
+                            type="email"
+                            className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 font-medium">رمز عبور</label>
+                        <input
+                            type="password"
+                            className="w-full mt-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        {isLogin ? 'ورود' : 'ثبت‌نام'}
+                    </button>
+                </form>
+                <button
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="w-full mt-4 text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                    {isLogin ? 'حساب کاربری ندارید؟ ثبت‌نام کنید.' : 'حساب کاربری دارید؟ وارد شوید.'}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// کامپوننت اصلی اپلیکیشن
+const App = () => {
+    const [user, setUser] = useState(null);
+    const [currentPage, setCurrentPage] = useState('checker');
+
+    useEffect(() => {
+        // در یک اپلیکیشن واقعی، از onAuthStateChanged برای بررسی وضعیت ورود استفاده می‌شود.
+        // در این نسخه آزمایشی، کاربر با ورود به صورت شبیه‌سازی شده، احراز هویت می‌شود.
+    }, []);
+
+    const handleLoginSuccess = (userData) => {
+        setUser(userData);
+        setCurrentPage('checker');
+    };
+
+    const handleLogout = () => {
+        setUser(null);
+        setCurrentPage('checker');
+    };
+
+    if (!user) {
+        return <Auth onLoginSuccess={handleLoginSuccess} />;
+    }
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'checker':
+                return <Checker />;
+            case 'grammar':
+                return <GrammarRules />;
+            case 'vocabulary':
+                return <Vocabulary />;
+            case 'search':
+                return <WordSearch />;
+            case 'support':
+                return <SupportChat />;
+            case 'profile':
+                return <Profile />;
+            case 'dashboard':
+                return user.isAdmin ? <Dashboard /> : <p className="text-center text-red-500">دسترسی محدود.</p>;
+            default:
+                return <Checker />;
+        }
+    };
+
+    return (
+        <div className="font-sans antialiased text-right bg-gray-100 min-h-screen pb-16" dir="rtl">
+            <style>
+                {`
+                    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap');
+                    body {
+                        font-family: 'Vazirmatn', sans-serif;
+                    }
+                    .nav-btn {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.25rem;
+                        padding: 0.5rem 0.75rem;
+                        border-radius: 0.75rem;
+                        transition: all 0.2s ease-in-out;
+                        color: #4b5563; /* text-gray-600 */
+                    }
+                    .nav-btn:hover {
+                        background-color: #4f46e5; /* bg-indigo-600 */
+                        color: white;
+                        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                    }
+                    .nav-btn span {
+                        color: inherit;
+                        transition: color 0.2s ease-in-out;
+                    }
+                    .nav-btn-logout {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.25rem;
+                        padding: 0.5rem 0.75rem;
+                        border-radius: 0.75rem;
+                        background-color: #dc2626; /* bg-red-600 */
+                        color: white;
+                        transition: all 0.2s ease-in-out;
+                    }
+                    .nav-btn-logout:hover {
+                        background-color: #b91c1c; /* bg-red-700 */
+                        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                    }
+                `}
+            </style>
+            <Navbar user={user} onPageChange={setCurrentPage} onLogout={handleLogout} />
+            <AppContainer>
+                {renderPage()}
+            </AppContainer>
+        </div>
+    );
+};
+
+export default App;
+

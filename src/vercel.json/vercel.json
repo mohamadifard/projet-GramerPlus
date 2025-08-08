@@ -1,0 +1,23 @@
+مطهره محمدی فرد <motahare512@gmail.com>
+	
+7:57 PM (12 minutes ago)
+	
+to me
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
